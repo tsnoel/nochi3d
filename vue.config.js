@@ -20,7 +20,7 @@ module.exports = {
         output: {
             chunkFilename: '[name].js?id=[chunkhash]',
             filename: '[name].js?id=[hash]',
-            globalObject: 'owo'
+            globalObject: 'window'
         },
         resolve: {
             extensions: ['.js', '.vue', '.json'],
