@@ -115,6 +115,11 @@ export default {
             // Move the sphere upward 1/2 of its height
             sphere.position.y = 4;
 
+            const box = BABYLON.MeshBuilder.CreateBox('box', {
+                size: 8
+            }, this.scene);
+            box.position.y = 4;
+
             const rotateSphere = new BABYLON.Animation('rotateSphere', 'rotation.y', 10,
                 BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
 
@@ -136,7 +141,8 @@ export default {
 
             this.scene.beginAnimation(sphere, 0, 40, true);
 
-            sphere.checkCollisions = true;
+            box.checkCollisions = true;
+            box.visibility = 0;
 
             GroundsModel.addGround({
                 name: 'ground1',
