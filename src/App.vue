@@ -1,15 +1,10 @@
 <template>
-    <demo/>
+    <router-view/>
 </template>
 
 <script>
-import Demo from './components/Demo'
-
 export default {
-    name: 'App',
-    components: {
-        [Demo.name]: Demo
-    }
+    name: 'App'
 }
 </script>
 
