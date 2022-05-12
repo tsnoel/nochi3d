@@ -18,7 +18,9 @@ export default {
             camera: undefined,
             canvas: undefined,
             engine: undefined,
-            map: {}, // object for multiple key presses
+            jLock: false,
+            jump: 2,
+            kDown: {}, // object for multiple key presses
             scene: undefined
         };
     },
@@ -54,7 +56,7 @@ export default {
             // Create a basic BJS Scene object
             this.scene = new BABYLON.Scene(this.engine);
 
-            this.scene.gravity = new BABYLON.Vector3(0, -0.5, 0);
+            this.scene.gravity = new BABYLON.Vector3(0, -0.75, 0);
             this.scene.collisionsEnabled = true;
 
             this.scene.enablePhysics(
@@ -62,7 +64,7 @@ export default {
                 new BABYLON.CannonJSPlugin(true, 10, cannon)
             );
 
-            this.camera = CamerasModel.addCamera({
+            CamerasModel.addCamera({
                 name: 'camera',
                 scene: this.scene,
                 canvas: this.canvas
@@ -74,13 +76,13 @@ export default {
 
             this.scene.actionManager.registerAction(
                 new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyDownTrigger, (evt) => {
-                    this.map[evt.sourceEvent.key] = evt.sourceEvent.type == 'keydown';
+                    this.kDown[evt.sourceEvent.key] = evt.sourceEvent.type == 'keydown';
                 })
             );
 
             this.scene.actionManager.registerAction(
                 new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, (evt) => {
-                    this.map[evt.sourceEvent.key] = evt.sourceEvent.type == 'keydown';
+                    this.kDown[evt.sourceEvent.key] = evt.sourceEvent.type == 'keydown';
                 })
             );
 
@@ -161,17 +163,42 @@ export default {
                 TexturesModel.all.ground1
             );
 
-            this.jumping = false;
             this.scene.registerAfterRender(this.registerAfterRenderCallback);
         },
         registerAfterRenderCallback() {
-            if(this.map[' '] && !this.jumping) {
-                this.jumping = true;
-                this.camera.camera.cameraDirection.y += 2;
+            if (CamerasModel.getGroundDistance('camera', this.scene) < 4 && !this.jLock) {
+                this.jump = 2;
             }
 
-            if (this.camera.camera.cameraDirection.y <= 0.1) {
-                this.jumping = false;
+            if(this.kDown[' '] && !this.jLock && this.jump > 0) {
+                this.jump--;
+                this.jLock = true;
+
+                CamerasModel.all.camera.animations = [];
+                let a = new BABYLON.Animation(
+                    "a",
+                    "position.y",
+                    60,
+                    BABYLON.Animation.ANIMATIONTYPE_FLOAT,
+                    BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
+                );
+
+                // Animation keys
+                let keys = [];
+                keys.push({frame: 0, value: CamerasModel.all.camera.position.y});
+                keys.push({frame: 20, value: CamerasModel.all.camera.position.y + 16});
+                a.setKeys(keys);
+
+                let easingFunction = new BABYLON.CircleEase();
+                easingFunction.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEOUT);
+                a.setEasingFunction(easingFunction);
+
+                CamerasModel.all.camera.animations.push(a);
+                this.scene.beginAnimation(CamerasModel.all.camera, 0, 20, false);
+            }
+
+            if(!this.kDown[' '] && this.jLock) {
+                this.jLock = false;
             }
         }
     }
