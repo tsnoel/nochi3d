@@ -1,26 +1,5 @@
 import * as BABYLON from 'babylonjs';
 
-class Light {
-
-    constructor(config) {
-        this.name = config.name;
-        this.scene = config.scene;
-        this.light = undefined;
-
-        this.setup();
-    }
-
-    setup() {
-        // Create a basic light, aiming 0, 1, 0 - meaning, to the sky
-        this.light = new BABYLON.HemisphericLight(
-            this.name,
-            new BABYLON.Vector3(0, 1, 0),
-            this.scene
-        );
-    }
-
-}
-
 class Lights {
 
     constructor() {
@@ -28,11 +7,18 @@ class Lights {
     }
 
     addLight(config) {
-        const newLight = new Light(config);
+        this.all[config.name] = this.setupLight(config);
 
-        this.all[config.name] = newLight;
+        return this.all[config.name];
+    }
 
-        return newLight;
+    setupLight(config) {
+        // Create a basic light, aiming 0, 1, 0 - meaning, to the sky
+        return new BABYLON.HemisphericLight(
+            config.name,
+            new BABYLON.Vector3(0, 1, 0),
+            config.scene
+        );
     }
 }
 

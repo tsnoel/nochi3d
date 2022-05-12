@@ -15,11 +15,11 @@ class Cameras {
     setupCamera(config) {
         const camera = new BABYLON.UniversalCamera(
             config.name,
-            new BABYLON.Vector3(0, 3, -20),
+            new BABYLON.Vector3(30, 3, -70),
             config.scene
         );
 
-        camera.setTarget(BABYLON.Vector3.Zero());
+        camera.setTarget(new BABYLON.Vector3(10, 10, 0));
 
         camera.applyGravity = true;
         camera._needMoveForGravity = true;

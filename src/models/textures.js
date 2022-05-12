@@ -1,32 +1,5 @@
 import * as BABYLON from 'babylonjs';
 
-class Texture {
-
-    constructor(config) {
-        this.name = config.name;
-        this.scene = config.scene;
-
-        this.asset = config.asset || '';
-
-        this.texture = undefined;
-
-        this.setup();
-
-        if (this.asset) {
-            this.setAsset();
-        }
-    }
-
-    setup() {
-        this.texture = new BABYLON.StandardMaterial(this.name, this.scene);
-    }
-
-    setAsset() {
-        this.texture.diffuseTexture = new BABYLON.Texture(this.asset, this.scene);
-    }
-
-}
-
 class Textures {
 
     constructor() {
@@ -34,11 +7,23 @@ class Textures {
     }
 
     addTexture(config) {
-        const newTexture = new Texture(config);
+        this.all[config.name] = this.setupTexture(config);
 
-        this.all[config.name] = newTexture;
+        return this.all[config.name];
+    }
 
-        return newTexture;
+    setAsset(texture, config) {
+        texture.diffuseTexture = new BABYLON.Texture(config.asset, config.scene);
+    }
+
+    setupTexture(config) {
+        let txt = new BABYLON.StandardMaterial(this.name, this.scene);
+
+        if (config.asset) {
+            this.setAsset(txt, config);
+        }
+
+        return txt;
     }
 }
 

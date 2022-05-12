@@ -7,7 +7,7 @@ import * as BABYLON from 'babylonjs';
 import * as cannon from 'cannon';
 
 import CamerasModel from 'models/cameras';
-import GroundsModel from 'models/grounds';
+import MeshModel from 'models/mesh';
 import LightsModel from 'models/lights';
 import TexturesModel from 'models/textures';
 
@@ -15,7 +15,6 @@ export default {
     name: 'demo',
     data() {
         return {
-            camera: undefined,
             canvas: undefined,
             engine: undefined,
             jLock: false,
@@ -52,26 +51,7 @@ export default {
         });
     },
     methods: {
-        createScene() {
-            // Create a basic BJS Scene object
-            this.scene = new BABYLON.Scene(this.engine);
-
-            this.scene.gravity = new BABYLON.Vector3(0, -0.75, 0);
-            this.scene.collisionsEnabled = true;
-
-            this.scene.enablePhysics(
-                null,
-                new BABYLON.CannonJSPlugin(true, 10, cannon)
-            );
-
-            CamerasModel.addCamera({
-                name: 'camera',
-                scene: this.scene,
-                canvas: this.canvas
-            });
-
-            /****************************Key Controls************************************************/
-
+        addKeyControls() {
             this.scene.actionManager = new BABYLON.ActionManager(this.scene);
 
             this.scene.actionManager.registerAction(
@@ -85,82 +65,173 @@ export default {
                     this.kDown[evt.sourceEvent.key] = evt.sourceEvent.type == 'keydown';
                 })
             );
-
-            /****************************End Key Controls************************************************/
-
+        },
+        addPointerLock() {
             // On click event, request pointer lock
-            this.scene.onPointerDown = (evt) => {
-
-                this.canvas.requestPointerLock = this.canvas.requestPointerLock || this.canvas.msRequestPointerLock ||
-                    this.canvas.mozRequestPointerLock || this.canvas.webkitRequestPointerLock;
+            this.scene.onPointerDown = () => {
+                this.canvas.requestPointerLock =
+                    this.canvas.requestPointerLock ||
+                    this.canvas.msRequestPointerLock ||
+                    this.canvas.mozRequestPointerLock ||
+                    this.canvas.webkitRequestPointerLock;
 
                 if (this.canvas.requestPointerLock) {
                     this.canvas.requestPointerLock();
                 }
-
             };
+        },
+        addTextures() {
+            TexturesModel.addTexture({
+                name: 'ground1',
+                scene: this.scene,
+                asset: 'assets/mochi_full.jpg'
+            });
+
+            TexturesModel.addTexture({
+                name: 'gregg',
+                scene: this.scene,
+                asset: 'assets/gregg_face.png'
+            });
+
+            TexturesModel.addTexture({
+                name: 'leo',
+                scene: this.scene,
+                asset: 'assets/leo_face.png'
+            });
+
+            TexturesModel.addTexture({
+                name: 'mochi',
+                scene: this.scene,
+                asset: 'assets/mochi_face.jpg'
+            });
+
+            TexturesModel.addTexture({
+                name: 'mochi2',
+                scene: this.scene,
+                asset: 'assets/mochi_face_2.png'
+            });
+
+            TexturesModel.addTexture({
+                name: 'nori',
+                scene: this.scene,
+                asset: 'assets/nori_face.png'
+            });
+
+            TexturesModel.addTexture({
+                name: 'nori2',
+                scene: this.scene,
+                asset: 'assets/nori_full.png'
+            });
+        },
+        createScene() {
+            // Create a basic BJS Scene object
+            this.scene = new BABYLON.Scene(this.engine);
+
+            this.scene.gravity = new BABYLON.Vector3(0, -0.6, 0);
+            this.scene.collisionsEnabled = true;
+
+            this.scene.enablePhysics(
+                null,
+                new BABYLON.CannonJSPlugin(true, 10, cannon)
+            );
+
+
+            this.addKeyControls();
+            this.addPointerLock();
+            this.addTextures();
+
+
+            CamerasModel.addCamera({
+                name: 'camera',
+                scene: this.scene,
+                canvas: this.canvas
+            });
 
             LightsModel.addLight({
                 name: 'light1',
                 scene: this.scene
             });
 
-            // Create a built-in "sphere" shape; its constructor takes 6 params:
-            // name, segment, diameter, scene, updatable, sideOrientation
-            let sphere = BABYLON.Mesh.CreateSphere('sphere1', 16, 8, this.scene, false, BABYLON.Mesh.FRONTSIDE);
+            MeshModel.addMesh('sphere',
+                {
+                    name: 'sphere1',
+                    diameter: 10,
+                    scene: this.scene,
+                    texture: TexturesModel.all.nori,
+                    rotate: true,
+                    y: 6
+                }
+            );
 
-            let sphereTexture = new BABYLON.StandardMaterial('sphereTexture', this.scene);
-            sphereTexture.diffuseTexture = new BABYLON.Texture('assets/nori.png', this.scene);
+            MeshModel.addMesh('sphere',
+                {
+                    name: 'sphere2',
+                    diameter: 8,
+                    scene: this.scene,
+                    texture: TexturesModel.all.gregg,
+                    rotate: true,
+                    x: 20,
+                    y: 10,
+                    z: -28
+                }
+            );
 
-            sphere.material = sphereTexture;
+            MeshModel.addMesh('sphere',
+                {
+                    name: 'sphere3',
+                    diameter: 12,
+                    scene: this.scene,
+                    texture: TexturesModel.all.mochi,
+                    reverseRotate: true,
+                    x: -15
+                }
+            );
 
-            // Move the sphere upward 1/2 of its height
-            sphere.position.y = 4;
+            MeshModel.addMesh('sphere',
+                {
+                    name: 'sphere4',
+                    diameter: 6,
+                    scene: this.scene,
+                    texture: TexturesModel.all.mochi2,
+                    rotate: true,
+                    x: -15,
+                    y: 12
+                }
+            );
 
-            const box = BABYLON.MeshBuilder.CreateBox('box', {
-                size: 8
-            }, this.scene);
-            box.position.y = 4;
+            MeshModel.addMesh('sphere',
+                {
+                    name: 'sphere5',
+                    diameter: 8,
+                    scene: this.scene,
+                    texture: TexturesModel.all.leo,
+                    reverseRotate: true,
+                    x: 28,
+                    y: 8,
+                    z: -18
+                }
+            );
 
-            const rotateSphere = new BABYLON.Animation('rotateSphere', 'rotation.y', 10,
-                BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+            MeshModel.addMesh('sphere',
+                {
+                    name: 'sphereL',
+                    diameter: 50,
+                    scene: this.scene,
+                    texture: TexturesModel.all.nori2,
+                    x: 100,
+                    y: 25,
+                    z: -100
+                }
+            );
 
-            const keyFrames = [];
-
-            keyFrames.push({
-                frame: 0,
-                value: 0
-            });
-
-            keyFrames.push({
-                frame: 40,
-                value: 2 * Math.PI
-            });
-
-            rotateSphere.setKeys(keyFrames);
-
-            sphere.animations.push(rotateSphere);
-
-            this.scene.beginAnimation(sphere, 0, 40, true);
-
-            box.checkCollisions = true;
-            box.visibility = 0;
-
-            GroundsModel.addGround({
-                name: 'ground1',
-                width: 250,
-                height: 250,
-                scene: this.scene
-            });
-
-            TexturesModel.addTexture({
-                name: 'ground1',
-                scene: this.scene,
-                asset: 'assets/grass.jpg'
-            });
-
-            GroundsModel.all.ground1.setTexture(
-                TexturesModel.all.ground1
+            MeshModel.addMesh('ground',
+                {
+                    name: 'ground1',
+                    width: 150,
+                    height: 150,
+                    scene: this.scene,
+                    texture: TexturesModel.all.ground1
+                }
             );
 
             this.scene.registerAfterRender(this.registerAfterRenderCallback);
@@ -190,7 +261,7 @@ export default {
                 a.setKeys(keys);
 
                 let easingFunction = new BABYLON.CircleEase();
-                easingFunction.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEOUT);
+                easingFunction.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
                 a.setEasingFunction(easingFunction);
 
                 CamerasModel.all.camera.animations.push(a);
