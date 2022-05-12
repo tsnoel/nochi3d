@@ -4,6 +4,16 @@ class Cameras {
 
     constructor() {
         this.all = {};
+
+        this.jump = new BABYLON.Animation(
+            'jump', 'position.y', 60,
+            BABYLON.Animation.ANIMATIONTYPE_FLOAT,
+            BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
+        );
+
+        const easingFunction = new BABYLON.CircleEase();
+        easingFunction.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEOUT);
+        this.jump.setEasingFunction(easingFunction);
     }
 
     addCamera(config) {
@@ -31,8 +41,8 @@ class Cameras {
     }
 
     addCameraWASD(name) {
-        this.all[name].keysUp.push(87);
-        this.all[name].keysDown.push(83);
+        // this.all[name].keysUp.push(87);
+        // this.all[name].keysDown.push(83);
         this.all[name].keysRight.push(68);
         this.all[name].keysLeft.push(65);
     }

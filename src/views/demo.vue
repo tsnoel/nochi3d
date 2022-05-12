@@ -1,5 +1,5 @@
 <template>
-  <canvas class="demo" id="demo"></canvas>
+    <canvas class="demo" id="demo"></canvas>
 </template>
 
 <script>
@@ -22,6 +22,9 @@ export default {
             kDown: {}, // object for multiple key presses
             scene: undefined
         };
+    },
+    props: {
+        keys: Object
     },
     mounted() {
         // Get the canvas DOM element
@@ -51,21 +54,6 @@ export default {
         });
     },
     methods: {
-        addKeyControls() {
-            this.scene.actionManager = new BABYLON.ActionManager(this.scene);
-
-            this.scene.actionManager.registerAction(
-                new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyDownTrigger, (evt) => {
-                    this.kDown[evt.sourceEvent.key] = evt.sourceEvent.type == 'keydown';
-                })
-            );
-
-            this.scene.actionManager.registerAction(
-                new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, (evt) => {
-                    this.kDown[evt.sourceEvent.key] = evt.sourceEvent.type == 'keydown';
-                })
-            );
-        },
         addPointerLock() {
             // On click event, request pointer lock
             this.scene.onPointerDown = () => {
@@ -127,7 +115,7 @@ export default {
             // Create a basic BJS Scene object
             this.scene = new BABYLON.Scene(this.engine);
 
-            this.scene.gravity = new BABYLON.Vector3(0, -0.6, 0);
+            this.scene.gravity = new BABYLON.Vector3(0, -1, 0);
             this.scene.collisionsEnabled = true;
 
             this.scene.enablePhysics(
@@ -135,11 +123,8 @@ export default {
                 new BABYLON.CannonJSPlugin(true, 10, cannon)
             );
 
-
-            this.addKeyControls();
             this.addPointerLock();
             this.addTextures();
-
 
             CamerasModel.addCamera({
                 name: 'camera',
@@ -152,20 +137,17 @@ export default {
                 scene: this.scene
             });
 
-            MeshModel.addMesh('sphere',
-                {
-                    name: 'sphere1',
-                    diameter: 10,
-                    scene: this.scene,
-                    texture: TexturesModel.all.nori,
-                    rotate: true,
-                    y: 6
-                }
-            );
+            MeshModel.addMesh('sphere', {
+                name: 'noriS',
+                diameter: 10,
+                scene: this.scene,
+                texture: TexturesModel.all.nori,
+                rotate: true,
+                y: 6
+            });
 
-            MeshModel.addMesh('sphere',
-                {
-                    name: 'sphere2',
+            MeshModel.addMesh('sphere', {
+                    name: 'greggS',
                     diameter: 8,
                     scene: this.scene,
                     texture: TexturesModel.all.gregg,
@@ -173,102 +155,105 @@ export default {
                     x: 20,
                     y: 10,
                     z: -28
-                }
-            );
+            });
 
-            MeshModel.addMesh('sphere',
-                {
-                    name: 'sphere3',
-                    diameter: 12,
-                    scene: this.scene,
-                    texture: TexturesModel.all.mochi,
-                    reverseRotate: true,
-                    x: -15
-                }
-            );
+            MeshModel.addMesh('sphere', {
+                name: 'mochiS',
+                diameter: 12,
+                scene: this.scene,
+                texture: TexturesModel.all.mochi,
+                reverseRotate: true,
+                x: -15
+            });
 
-            MeshModel.addMesh('sphere',
-                {
-                    name: 'sphere4',
-                    diameter: 6,
-                    scene: this.scene,
-                    texture: TexturesModel.all.mochi2,
-                    rotate: true,
-                    x: -15,
-                    y: 12
-                }
-            );
+            MeshModel.addMesh('sphere', {
+                name: 'mochi2S',
+                diameter: 6,
+                scene: this.scene,
+                texture: TexturesModel.all.mochi2,
+                rotate: true,
+                x: -15,
+                y: 12
+            });
 
-            MeshModel.addMesh('sphere',
-                {
-                    name: 'sphere5',
-                    diameter: 8,
-                    scene: this.scene,
-                    texture: TexturesModel.all.leo,
-                    reverseRotate: true,
-                    x: 28,
-                    y: 8,
-                    z: -18
-                }
-            );
+            MeshModel.addMesh('sphere', {
+                name: 'leoS',
+                diameter: 8,
+                scene: this.scene,
+                texture: TexturesModel.all.leo,
+                reverseRotate: true,
+                x: 28,
+                y: 8,
+                z: -18
+            });
 
-            MeshModel.addMesh('sphere',
-                {
-                    name: 'sphereL',
-                    diameter: 50,
-                    scene: this.scene,
-                    texture: TexturesModel.all.nori2,
-                    x: 100,
-                    y: 25,
-                    z: -100
-                }
-            );
+            MeshModel.addMesh('sphere', {
+                name: 'nori2SL',
+                diameter: 50,
+                scene: this.scene,
+                texture: TexturesModel.all.nori2,
+                x: 100,
+                y: 25,
+                z: -100
+            });
 
-            MeshModel.addMesh('ground',
-                {
-                    name: 'ground1',
-                    width: 150,
-                    height: 150,
-                    scene: this.scene,
-                    texture: TexturesModel.all.ground1
-                }
-            );
+            MeshModel.addMesh('ground', {
+                name: 'ground1',
+                width: 150,
+                height: 150,
+                scene: this.scene,
+                texture: TexturesModel.all.ground1
+            });
 
-            this.scene.registerAfterRender(this.registerAfterRenderCallback);
+            this.scene.registerAfterRender(this.keyboardListener);
         },
-        registerAfterRenderCallback() {
-            if (CamerasModel.getGroundDistance('camera', this.scene) < 4 && !this.jLock) {
+        keyboardListener() {
+            if (!this.scene.isReady()) {
+                return;
+            }
+
+            if (this.keys.w || this.keys.a || this.keys.s || this.keys.d) {
+                const playerSpeed = 1;
+                const x = playerSpeed * parseFloat(Math.sin(CamerasModel.all.camera.rotation.y));
+                const z = playerSpeed * parseFloat(Math.cos(CamerasModel.all.camera.rotation.y));
+
+                if (this.keys.w) {
+                    CamerasModel.all.camera.position.x += x;
+                    CamerasModel.all.camera.position.z += z;
+                }
+
+                if (this.keys.s) {
+                    CamerasModel.all.camera.position.x += -x;
+                    CamerasModel.all.camera.position.z += -z;
+                }
+
+                // if (this.keys.a) {
+                // }
+
+                // if (this.keys.d) {
+                // }
+            }
+
+            if (this.jump < 2 && !this.jLock &&
+                CamerasModel.getGroundDistance('camera', this.scene) < 4) {
                 this.jump = 2;
             }
 
-            if(this.kDown[' '] && !this.jLock && this.jump > 0) {
+            if (this.keys.space && !this.jLock && this.jump > 0) {
                 this.jump--;
                 this.jLock = true;
 
-                CamerasModel.all.camera.animations = [];
-                let a = new BABYLON.Animation(
-                    "a",
-                    "position.y",
-                    60,
-                    BABYLON.Animation.ANIMATIONTYPE_FLOAT,
-                    BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
-                );
+                CamerasModel.jump.setKeys([
+                    {frame: 0, value: CamerasModel.all.camera.position.y},
+                    {frame: 20, value: CamerasModel.all.camera.position.y + 16}
+                ]);
 
-                // Animation keys
-                let keys = [];
-                keys.push({frame: 0, value: CamerasModel.all.camera.position.y});
-                keys.push({frame: 20, value: CamerasModel.all.camera.position.y + 16});
-                a.setKeys(keys);
+                CamerasModel.all.camera.animations = [CamerasModel.jump];
 
-                let easingFunction = new BABYLON.CircleEase();
-                easingFunction.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
-                a.setEasingFunction(easingFunction);
-
-                CamerasModel.all.camera.animations.push(a);
                 this.scene.beginAnimation(CamerasModel.all.camera, 0, 20, false);
             }
 
-            if(!this.kDown[' '] && this.jLock) {
+            if (this.jLock && !this.keys.space) {
                 this.jLock = false;
             }
         }
