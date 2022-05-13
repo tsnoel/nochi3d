@@ -140,8 +140,7 @@ export default {
                 scene: this.scene
             });
 
-            BABYLON.SceneLoader.ImportMesh(null, 'assets/', 'penguin.obj', this.scene, (newMeshes) => {
-                console.log(newMeshes);
+            BABYLON.SceneLoader.ImportMesh(null, 'assets/', 'penguin.glb', this.scene, (newMeshes) => {
                 MeshModel.imported.penguin = BABYLON.MeshBuilder.CreateBox(
                     'penguin', { size: 6 }, this.scene);
 
@@ -151,8 +150,9 @@ export default {
                     nm.parent = MeshModel.imported.penguin;
                 });
 
-                MeshModel.imported.penguin.position.y = 20;
-                MeshModel.imported.penguin.rotation.z = Math.PI/4;
+                MeshModel.imported.penguin.position.y = 11;
+                MeshModel.imported.penguin.rotation.x = Math.PI/2;
+                MeshModel.imported.penguin.rotation.y = Math.PI;
 
                 MeshModel.imported.penguin.checkCollisions = true;
 
