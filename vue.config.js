@@ -17,9 +17,6 @@ module.exports = {
     publicPath: './',
     outputDir: path.resolve(__dirname, 'docs'),
     configureWebpack: {
-        devServer: {
-            historyApiFallback: true
-        },
         output: {
             chunkFilename: '[name].js?id=[chunkhash]',
             filename: '[name].js?id=[hash]',
