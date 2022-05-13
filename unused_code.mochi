@@ -1,0 +1,28 @@
+            if (this.keys.w || this.keys.a || this.keys.s || this.keys.d) {
+                const playerSpeed = 1;
+                const x = playerSpeed * parseFloat(Math.sin(CamerasModel.all.camera.rotation.y));
+                const z = playerSpeed * parseFloat(Math.cos(CamerasModel.all.camera.rotation.y));
+
+                const xx = playerSpeed * parseFloat(Math.sin(CamerasModel.all.camera.rotation.y + (Math.PI / 2)));
+                const zz = playerSpeed * parseFloat(Math.cos(CamerasModel.all.camera.rotation.y + (Math.PI / 2)));
+
+                if (this.keys.w) {
+                    CamerasModel.all.camera.position.x += x;
+                    CamerasModel.all.camera.position.z += z;
+                }
+
+                if (this.keys.s) {
+                    CamerasModel.all.camera.position.x += -x;
+                    CamerasModel.all.camera.position.z += -z;
+                }
+
+                if (this.keys.a) {
+                    CamerasModel.all.camera.position.x += -xx;
+                    CamerasModel.all.camera.position.z += -zz;
+                }
+
+                if (this.keys.d) {
+                    CamerasModel.all.camera.position.x += xx;
+                    CamerasModel.all.camera.position.z += zz;
+                }
+            }

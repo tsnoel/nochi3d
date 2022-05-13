@@ -57,63 +57,6 @@ export default {
         });
     },
     methods: {
-        addPointerLock() {
-            // On click event, request pointer lock
-            this.scene.onPointerDown = () => {
-                this.canvas.requestPointerLock =
-                    this.canvas.requestPointerLock ||
-                    this.canvas.msRequestPointerLock ||
-                    this.canvas.mozRequestPointerLock ||
-                    this.canvas.webkitRequestPointerLock;
-
-                if (this.canvas.requestPointerLock) {
-                    this.canvas.requestPointerLock();
-                }
-            };
-        },
-        addTextures() {
-            TexturesModel.addTexture({
-                name: 'ground1',
-                scene: this.scene,
-                asset: 'assets/mochi_full.jpg'
-            });
-
-            TexturesModel.addTexture({
-                name: 'gregg',
-                scene: this.scene,
-                asset: 'assets/gregg_face.png'
-            });
-
-            TexturesModel.addTexture({
-                name: 'leo',
-                scene: this.scene,
-                asset: 'assets/leo_face.png'
-            });
-
-            TexturesModel.addTexture({
-                name: 'mochi',
-                scene: this.scene,
-                asset: 'assets/mochi_face.jpg'
-            });
-
-            TexturesModel.addTexture({
-                name: 'mochi2',
-                scene: this.scene,
-                asset: 'assets/mochi_face_2.png'
-            });
-
-            TexturesModel.addTexture({
-                name: 'nori',
-                scene: this.scene,
-                asset: 'assets/nori_face.png'
-            });
-
-            TexturesModel.addTexture({
-                name: 'nori2',
-                scene: this.scene,
-                asset: 'assets/nori_full.png'
-            });
-        },
         createScene() {
             // Create a basic BJS Scene object
             this.scene = new BABYLON.Scene(this.engine);
@@ -126,11 +69,12 @@ export default {
                 new BABYLON.CannonJSPlugin(true, 10, cannon)
             );
 
-            this.addPointerLock();
-            this.addTextures();
+            CamerasModel.addPointerLock(this.scene, this.canvas);
+            this.setTextures();
 
             CamerasModel.addCamera({
                 name: 'camera',
+                position: new BABYLON.Vector3(0, 3, -40),
                 scene: this.scene,
                 canvas: this.canvas
             });
@@ -235,37 +179,6 @@ export default {
                 return;
             }
 
-            /*
-            if (this.keys.w || this.keys.a || this.keys.s || this.keys.d) {
-                const playerSpeed = 1;
-                const x = playerSpeed * parseFloat(Math.sin(CamerasModel.all.camera.rotation.y));
-                const z = playerSpeed * parseFloat(Math.cos(CamerasModel.all.camera.rotation.y));
-
-                const xx = playerSpeed * parseFloat(Math.sin(CamerasModel.all.camera.rotation.y + (Math.PI / 2)));
-                const zz = playerSpeed * parseFloat(Math.cos(CamerasModel.all.camera.rotation.y + (Math.PI / 2)));
-
-                if (this.keys.w) {
-                    CamerasModel.all.camera.position.x += x;
-                    CamerasModel.all.camera.position.z += z;
-                }
-
-                if (this.keys.s) {
-                    CamerasModel.all.camera.position.x += -x;
-                    CamerasModel.all.camera.position.z += -z;
-                }
-
-                if (this.keys.a) {
-                    CamerasModel.all.camera.position.x += -xx;
-                    CamerasModel.all.camera.position.z += -zz;
-                }
-
-                if (this.keys.d) {
-                    CamerasModel.all.camera.position.x += xx;
-                    CamerasModel.all.camera.position.z += zz;
-                }
-            }
-            */
-
             if (this.keys.shift && !this.crouch) {
                 CamerasModel.all.camera.ellipsoid.y = 0.75;
                 this.crouch = true;
@@ -297,6 +210,49 @@ export default {
             if (this.jLock && !this.keys.space) {
                 this.jLock = false;
             }
+        },
+        setTextures() {
+            TexturesModel.addTexture({
+                name: 'ground1',
+                scene: this.scene,
+                asset: 'assets/mochi_full.jpg'
+            });
+
+            TexturesModel.addTexture({
+                name: 'gregg',
+                scene: this.scene,
+                asset: 'assets/gregg_face.png'
+            });
+
+            TexturesModel.addTexture({
+                name: 'leo',
+                scene: this.scene,
+                asset: 'assets/leo_face.png'
+            });
+
+            TexturesModel.addTexture({
+                name: 'mochi',
+                scene: this.scene,
+                asset: 'assets/mochi_face.jpg'
+            });
+
+            TexturesModel.addTexture({
+                name: 'mochi2',
+                scene: this.scene,
+                asset: 'assets/mochi_face_2.png'
+            });
+
+            TexturesModel.addTexture({
+                name: 'nori',
+                scene: this.scene,
+                asset: 'assets/nori_face.png'
+            });
+
+            TexturesModel.addTexture({
+                name: 'nori2',
+                scene: this.scene,
+                asset: 'assets/nori_full.png'
+            });
         }
     }
 }

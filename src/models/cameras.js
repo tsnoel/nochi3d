@@ -22,29 +22,26 @@ class Cameras {
         this.addCameraWASD(config.name);
     }
 
-    setupCamera(config) {
-        const camera = new BABYLON.UniversalCamera(
-            config.name,
-            new BABYLON.Vector3(30, 3, -70),
-            config.scene
-        );
-
-        camera.setTarget(new BABYLON.Vector3(10, 10, 0));
-
-        camera.applyGravity = true;
-        camera._needMoveForGravity = true;
-        camera.ellipsoid = new BABYLON.Vector3(1, 1.5, 1);
-        camera.checkCollisions = true;
-        camera.attachControl(config.canvas, true);
-
-        return camera;
-    }
-
     addCameraWASD(name) {
         this.all[name].keysUp.push(87);
         this.all[name].keysDown.push(83);
         this.all[name].keysRight.push(68);
         this.all[name].keysLeft.push(65);
+    }
+
+    addPointerLock(scene, canvas) {
+        // On click event, request pointer lock
+        scene.onPointerDown = () => {
+            canvas.requestPointerLock =
+                canvas.requestPointerLock ||
+                canvas.msRequestPointerLock ||
+                canvas.mozRequestPointerLock ||
+                canvas.webkitRequestPointerLock;
+
+            if (canvas.requestPointerLock) {
+                canvas.requestPointerLock();
+            }
+        };
     }
 
     getGroundDistance(name, scene) {
@@ -56,6 +53,24 @@ class Cameras {
         const hit = scene.pickWithRay(ray);
 
         return hit.distance;
+    }
+
+    setupCamera(config) {
+        const camera = new BABYLON.UniversalCamera(
+            config.name,
+            config.position || new BABYLON.Vector3(0, 3, 0),
+            config.scene
+        );
+
+        camera.setTarget(new BABYLON.Vector3(0, 10, 0));
+
+        camera.applyGravity = true;
+        camera._needMoveForGravity = true;
+        camera.ellipsoid = new BABYLON.Vector3(1, 1.5, 1);
+        camera.checkCollisions = true;
+        camera.attachControl(config.canvas, true);
+
+        return camera;
     }
 }
 

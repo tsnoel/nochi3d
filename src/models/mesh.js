@@ -31,15 +31,17 @@ class Mesh {
     }
 
     addMesh(type, config) {
-        this[type][config.name] = {};
-
         if (type === 'ground') {
             this[type][config.name] = this.setupGround(config);
         } else if (type === 'sphere') {
             this[type][config.name] = this.setupSphere(config);
+        } else if (type === 'imported') {
+            this[type][config.name] = this.setupImported(config);
+        } else if (type === 'tiledground') {
+            this.ground[config.name] = this.setupTiledGround(config);
+        } else {
+            this[type][config.name] = {};
         }
-
-        return this[type][config.name];
     }
 
     setTexture(type, name, texture) {
@@ -65,6 +67,34 @@ class Mesh {
         grd.checkCollisions = true;
 
         return grd;
+    }
+
+    setupImported(config) {
+        BABYLON.SceneLoader.ImportMesh(null,
+            config.path, config.file, config.scene, (newMeshes) => {
+            this.imported[config.name] = BABYLON.MeshBuilder.CreateBox(config.name,
+                {size: config.size || 1},
+                this.scene);
+
+            this.imported[config.name].visibility = 0;
+
+            newMeshes.forEach((nm) => {
+                nm.checkCollisions = true;
+                nm.parent = this.imported[config.name];
+            });
+
+            if (config.position) {
+                this.imported[config.name].position = config.position;
+            }
+
+            if (config.rotation) {
+                this.imported[config.name].rotation = config.rotation;
+            }
+
+            if (config.scaling) {
+                this.imported[config.name].scaling = config.scaling;
+            }
+        });
     }
 
     setupSphere(config) {
@@ -109,6 +139,40 @@ class Mesh {
         s.parent = box;
 
         return box;
+    }
+
+    setupTiledGround(config) {
+        const grid = { 'h' : 8, 'w' : 8 };
+
+        const tiledGround = new BABYLON.MeshBuilder.CreateTiledGround(
+            config.name, {xmin: -3, zmin: -3, xmax: 3, zmax: 3, subdivisions: grid}
+        );
+
+        const multimat = new BABYLON.MultiMaterial('multi', config.scene);
+        multimat.subMaterials.push(config.texture);
+
+        tiledGround.material = multimat;
+
+        // Needed variables to set subMeshes
+        const verticesCount = tiledGround.getTotalVertices();
+        const tileIndicesLength = tiledGround.getIndices().length / (grid.w * grid.h);
+
+        // Set subMeshes of the tiled ground
+        tiledGround.subMeshes = [];
+        let base = 0;
+
+        for (let row = 0; row < grid.h; row++) {
+            for (let col = 0; col < grid.w; col++) {
+                tiledGround.subMeshes.push(new BABYLON.SubMesh(
+                    row%2 ^ col%2, 0, verticesCount, base , tileIndicesLength, tiledGround
+                ));
+                base += tileIndicesLength;
+            }
+        }
+
+        tiledGround.checkCollisions = true;
+
+        return tiledGround;
     }
 }
 
