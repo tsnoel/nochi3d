@@ -6,6 +6,8 @@
 import * as BABYLON from 'babylonjs';
 import * as cannon from 'cannon';
 
+import 'babylonjs-loaders';
+
 import CamerasModel from 'models/cameras';
 import MeshModel from 'models/mesh';
 import LightsModel from 'models/lights';
@@ -16,6 +18,7 @@ export default {
     data() {
         return {
             canvas: undefined,
+            crouch: false,
             engine: undefined,
             jLock: false,
             jump: 2,
@@ -115,7 +118,7 @@ export default {
             // Create a basic BJS Scene object
             this.scene = new BABYLON.Scene(this.engine);
 
-            this.scene.gravity = new BABYLON.Vector3(0, -1, 0);
+            this.scene.gravity = new BABYLON.Vector3(0, -1.3, 0);
             this.scene.collisionsEnabled = true;
 
             this.scene.enablePhysics(
@@ -135,6 +138,26 @@ export default {
             LightsModel.addLight({
                 name: 'light1',
                 scene: this.scene
+            });
+
+            BABYLON.SceneLoader.ImportMesh(null, 'assets/', 'penguin.obj', this.scene, (newMeshes) => {
+                console.log(newMeshes);
+                MeshModel.imported.penguin = BABYLON.MeshBuilder.CreateBox(
+                    'penguin', { size: 6 }, this.scene);
+
+                MeshModel.imported.penguin.visibility = 0;
+
+                newMeshes.forEach((nm) => {
+                    nm.parent = MeshModel.imported.penguin;
+                });
+
+                MeshModel.imported.penguin.position.y = 20;
+                MeshModel.imported.penguin.rotation.z = Math.PI/4;
+
+                MeshModel.imported.penguin.checkCollisions = true;
+
+                MeshModel.imported.penguin.animations.push(MeshModel.reverseRotateSphere);
+                this.scene.beginAnimation(MeshModel.imported.penguin, 0, 100, true);
             });
 
             MeshModel.addMesh('sphere', {
@@ -212,10 +235,14 @@ export default {
                 return;
             }
 
+            /*
             if (this.keys.w || this.keys.a || this.keys.s || this.keys.d) {
                 const playerSpeed = 1;
                 const x = playerSpeed * parseFloat(Math.sin(CamerasModel.all.camera.rotation.y));
                 const z = playerSpeed * parseFloat(Math.cos(CamerasModel.all.camera.rotation.y));
+
+                const xx = playerSpeed * parseFloat(Math.sin(CamerasModel.all.camera.rotation.y + (Math.PI / 2)));
+                const zz = playerSpeed * parseFloat(Math.cos(CamerasModel.all.camera.rotation.y + (Math.PI / 2)));
 
                 if (this.keys.w) {
                     CamerasModel.all.camera.position.x += x;
@@ -227,11 +254,25 @@ export default {
                     CamerasModel.all.camera.position.z += -z;
                 }
 
-                // if (this.keys.a) {
-                // }
+                if (this.keys.a) {
+                    CamerasModel.all.camera.position.x += -xx;
+                    CamerasModel.all.camera.position.z += -zz;
+                }
 
-                // if (this.keys.d) {
-                // }
+                if (this.keys.d) {
+                    CamerasModel.all.camera.position.x += xx;
+                    CamerasModel.all.camera.position.z += zz;
+                }
+            }
+            */
+
+            if (this.keys.shift && !this.crouch) {
+                CamerasModel.all.camera.ellipsoid.y = 0.75;
+                this.crouch = true;
+            } else if (!this.keys.shift && this.crouch) {
+                CamerasModel.all.camera.position.y += 1.5;
+                CamerasModel.all.camera.ellipsoid.y = 1.5;
+                this.crouch = false;
             }
 
             if (this.jump < 2 && !this.jLock &&

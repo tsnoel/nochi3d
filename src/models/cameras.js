@@ -41,8 +41,8 @@ class Cameras {
     }
 
     addCameraWASD(name) {
-        // this.all[name].keysUp.push(87);
-        // this.all[name].keysDown.push(83);
+        this.all[name].keysUp.push(87);
+        this.all[name].keysDown.push(83);
         this.all[name].keysRight.push(68);
         this.all[name].keysLeft.push(65);
     }

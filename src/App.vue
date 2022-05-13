@@ -12,6 +12,7 @@ export default {
     },
     beforeMount() {
         this.addKeyListeners();
+        // this.addTouchListeners();
     },
     methods: {
         addKeyListeners() {
@@ -31,6 +32,48 @@ export default {
                 if (e.keyCode == 68) { this.keys.d = false; }
                 if (e.keyCode == 32) { this.keys.space = false; }
                 if (e.keyCode == 16) { this.keys.shift = false; }
+            });
+        },
+        addTouchListeners() {
+            document.addEventListener('touchstart', (e) => {
+                /*
+                const theTouch = e.changedTouches[0];
+                const mouseEvent = document.createEvent('MouseEvent');
+
+                mouseEvent.initMouseEvent(
+                    'mousestart',
+                    true, true, window, 1,
+                    theTouch.screenX, theTouch.screenY,
+                    theTouch.clientX, theTouch.clientY,
+                    false, false, false, false, 0, null
+                );
+
+                theTouch.target.dispatchEvent(mouseEvent);
+
+                e.preventDefault();
+                */
+                this.keys.space = true;
+            });
+
+            document.addEventListener('touchend', (e) => {
+                this.keys.space = false;
+            });
+
+            document.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+
+                const theTouch = e.changedTouches[0];
+                const mouseEvent = document.createEvent('MouseEvent');
+
+                mouseEvent.initMouseEvent(
+                    'mousemove',
+                    true, true, window, 1,
+                    theTouch.screenX, theTouch.screenY,
+                    theTouch.clientX, theTouch.clientY,
+                    false, false, false, false, 0, null
+                );
+
+                theTouch.target.dispatchEvent(mouseEvent);
             });
         }
     }

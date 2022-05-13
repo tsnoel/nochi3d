@@ -4,44 +4,29 @@ class Mesh {
 
     constructor() {
         this.ground = {};
+        this.imported = {};
         this.sphere = {};
 
         this.rotateSphere = new BABYLON.Animation(
-            'rotateSphere',
-            'rotation.y',
-            10,
+            'rotateSphere', 'rotation.y', 10,
             BABYLON.Animation.ANIMATIONTYPE_FLOAT,
             BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
         );
 
         this.rotateSphere.setKeys([
-            {
-                frame: 0,
-                value: 0
-            },
-            {
-                frame: 100,
-                value: 2 * Math.PI
-            }
+            { frame: 0, value: 0 },
+            { frame: 100, value: 2 * Math.PI }
         ]);
 
         this.reverseRotateSphere = new BABYLON.Animation(
-            'rotateSphere',
-            'rotation.y',
-            10,
+            'rotateSphere', 'rotation.y', 10,
             BABYLON.Animation.ANIMATIONTYPE_FLOAT,
             BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
         );
 
         this.reverseRotateSphere.setKeys([
-            {
-                frame: 0,
-                value: 0
-            },
-            {
-                frame: 100,
-                value: -2 * Math.PI
-            }
+            { frame: 0, value: 0 },
+            { frame: 100, value: -2 * Math.PI }
         ]);
     }
 
