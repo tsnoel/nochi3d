@@ -65,7 +65,7 @@ function createScene(data) {
         scene: data.scene,
         texture: TexturesModel.all.gregg,
         rotate: true,
-        x: 20,
+        x: -30,
         y: 10,
         z: -28
     });
@@ -76,9 +76,31 @@ function createScene(data) {
         scene: data.scene,
         texture: TexturesModel.all.leo,
         reverseRotate: true,
-        x: 28,
+        x: 38,
         y: 8,
-        z: -18
+        z: -25
+    });
+
+    MeshModel.addMesh('sphere', {
+        name: 'fennyS',
+        diameter: 8,
+        scene: data.scene,
+        texture: TexturesModel.all.fenny,
+        rotate: true,
+        x: -20,
+        y: 10,
+        z: 28
+    });
+
+    MeshModel.addMesh('sphere', {
+        name: 'indyS',
+        diameter: 8,
+        scene: data.scene,
+        texture: TexturesModel.all.indy,
+        reverseRotate: true,
+        x: -28,
+        y: 12,
+        z: 18
     });
 
     MeshModel.addMesh('ground', {

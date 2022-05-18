@@ -144,7 +144,9 @@ export default {
                 mochi2: 'assets/mochi_face_2.png',
                 nori: 'assets/nori_face.png',
                 nori2: 'assets/nori_full.png',
-                snow: 'assets/snow.png'
+                snow: 'assets/snow.png',
+                fenny: 'assets/fenny.png',
+                indy: 'assets/indy.png'
             };
 
             Object.keys(files).forEach((name) => {
