@@ -62,6 +62,10 @@ class Cameras {
             config.scene
         );
 
+        camera.inertia = 0.3;
+        camera.angularSensibility = 800;
+        camera.speed = 10;
+
         camera.setTarget(new BABYLON.Vector3(0, 10, 0));
 
         camera.applyGravity = true;

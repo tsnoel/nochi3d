@@ -17,6 +17,14 @@ module.exports = {
     publicPath: './',
     outputDir: path.resolve(__dirname, 'docs'),
     configureWebpack: {
+        devServer: {
+            hot: false,
+            liveReload: true,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': '*'
+            }
+        },
         output: {
             chunkFilename: '[name].js?id=[chunkhash]',
             filename: '[name].js?id=[hash]',

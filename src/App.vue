@@ -48,7 +48,7 @@ export default {
         // Create a basic BJS Scene object
         this.scene = new BABYLON.Scene(this.engine);
 
-        this.scene.gravity = new BABYLON.Vector3(0, -1.3, 0);
+        this.scene.gravity = new BABYLON.Vector3(0, -2.4, 0);
         this.scene.collisionsEnabled = true;
 
         this.scene.enablePhysics(
