@@ -69,6 +69,10 @@ function createScene(data) {
         scene: data.scene,
         canvas: data.canvas
     });
+
+    CamerasModel.all.camera.onCollide = (mesh) => {
+        console.log(mesh);
+    }
 }
 
 export default {createScene};

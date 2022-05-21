@@ -70,7 +70,7 @@ class Cameras {
 
         camera.applyGravity = true;
         camera._needMoveForGravity = true;
-        camera.ellipsoid = new BABYLON.Vector3(1, 1.5, 1);
+        camera.ellipsoid = new BABYLON.Vector3(1.5, 1.5, 1.5);
         camera.checkCollisions = true;
         camera.attachControl(config.canvas, true);
 
