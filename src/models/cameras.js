@@ -55,10 +55,25 @@ class Cameras {
         return hit.distance;
     }
 
+    getFacingMesh(name, scene) {
+        const ray = scene.createPickingRay(
+            scene.pointerX, scene.pointerY,
+            BABYLON.Matrix.Identity(), this.all[name]
+        );
+
+        const hit = scene.pickWithRay(ray);
+
+        if (hit.distance < 30) {
+            return hit.pickedMesh;
+        }
+
+        return undefined;
+    }
+
     setupCamera(config) {
         const camera = new BABYLON.UniversalCamera(
             config.name,
-            config.position || new BABYLON.Vector3(0, 3, 0),
+            config.position || new BABYLON.Vector3(0, config.playerHeight * 2, 0),
             config.scene
         );
 
@@ -70,7 +85,7 @@ class Cameras {
 
         camera.applyGravity = true;
         camera._needMoveForGravity = true;
-        camera.ellipsoid = new BABYLON.Vector3(1.5, 1.5, 1.5);
+        camera.ellipsoid = new BABYLON.Vector3(1.5, config.playerHeight, 1.5);
         camera.checkCollisions = true;
         camera.attachControl(config.canvas, true);
 

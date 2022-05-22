@@ -76,10 +76,8 @@ class Mesh {
                 {size: config.size || 1},
                 this.scene);
 
-            this.imported[config.name].visibility = 0;
-
             newMeshes.forEach((nm) => {
-                nm.checkCollisions = true;
+                // nm.checkCollisions = true;
                 nm.parent = this.imported[config.name];
             });
 
@@ -94,6 +92,9 @@ class Mesh {
             if (config.scaling) {
                 this.imported[config.name].scaling = config.scaling;
             }
+
+            this.imported[config.name].visibility = 0;
+            this.imported[config.name].checkCollisions = true;
         });
     }
 

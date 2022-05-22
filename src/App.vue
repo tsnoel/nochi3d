@@ -1,5 +1,12 @@
 <template>
     <canvas class="game" id="game"></canvas>
+    <div v-if="interact && !message" class="text">
+        <div>Press '{{interact.key.toUpperCase()}}'</div>
+        <div>{{interact.actionLabel}} {{interact.label}}</div>
+    </div>
+    <div v-else-if="message" class="text">
+        <div>{{message}}</div>
+    </div>
 </template>
 
 <script>
@@ -8,13 +15,16 @@ import * as cannon from 'cannon';
 
 import 'babylonjs-loaders';
 
-import demo from 'helpers/demo';
+// import demo from 'helpers/demo';
 import house from 'helpers/house';
 
 import CamerasModel from 'models/cameras';
 import MeshModel from 'models/mesh';
 import LightsModel from 'models/lights';
 import TexturesModel from 'models/textures';
+
+const MAXJUMP = 2;
+const PLAYERHEIGHT = 5;
 
 export default {
     name: 'App',
@@ -23,8 +33,10 @@ export default {
             canvas: undefined,
             crouch: false,
             engine: undefined,
+            interact: undefined,
             jLock: false,
-            jump: 2,
+            jumpCounter: MAXJUMP,
+            message: undefined,
             scene: undefined,
             keys: {}
         };
@@ -63,10 +75,9 @@ export default {
         house.createScene({
             scene: this.scene,
             engine: this.engine,
-            canvas: this.canvas
+            canvas: this.canvas,
+            playerHeight: PLAYERHEIGHT
         });
-
-        CamerasModel.addPointerLock(this.scene, this.canvas);
 
         this.scene.registerAfterRender(this.keyboardListener);
 
@@ -83,11 +94,13 @@ export default {
     methods: {
         addKeyListeners() {
             document.addEventListener ('keydown', (e) => {
+                if (e.keyCode == 69) { this.keys.e = true; }
                 if (e.keyCode == 32) { this.keys.space = true; }
                 if (e.keyCode == 16) { this.keys.shift = true; }
             });
 
             document.addEventListener ('keyup', (e) => {
+                if (e.keyCode == 69) { this.keys.e = false; }
                 if (e.keyCode == 32) { this.keys.space = false; }
                 if (e.keyCode == 16) { this.keys.shift = false; }
             });
@@ -98,21 +111,21 @@ export default {
             }
 
             if (this.keys.shift && !this.crouch) {
-                CamerasModel.all.camera.ellipsoid.y = 0.75;
+                CamerasModel.all.camera.ellipsoid.y = PLAYERHEIGHT / 2;
                 this.crouch = true;
             } else if (!this.keys.shift && this.crouch) {
-                CamerasModel.all.camera.position.y += 1.5;
-                CamerasModel.all.camera.ellipsoid.y = 1.5;
+                CamerasModel.all.camera.position.y += PLAYERHEIGHT;
+                CamerasModel.all.camera.ellipsoid.y = PLAYERHEIGHT;
                 this.crouch = false;
             }
 
-            if (this.jump < 2 && !this.jLock &&
-                CamerasModel.getGroundDistance('camera', this.scene) < 4) {
-                this.jump = 2;
+            if (this.jumpCounter < MAXJUMP && !this.jLock &&
+                CamerasModel.getGroundDistance('camera', this.scene) < (PLAYERHEIGHT * 2) + 1) {
+                this.jumpCounter = MAXJUMP;
             }
 
-            if (this.keys.space && !this.jLock && this.jump > 0) {
-                this.jump--;
+            if (this.keys.space && !this.jLock && this.jumpCounter > 0) {
+                this.jumpCounter--;
                 this.jLock = true;
 
                 CamerasModel.jump.setKeys([
@@ -127,6 +140,18 @@ export default {
 
             if (this.jLock && !this.keys.space) {
                 this.jLock = false;
+            }
+
+            this.interact = house.handleFacingMesh(CamerasModel.getFacingMesh('camera', this.scene));
+
+            if (this.interact && this.keys[this.interact.key]) {
+                const res = this.interact.action();
+
+                if (res) {
+                    this.message = res;
+
+                    setTimeout(() => {this.message = ''}, 1500);
+                }
             }
         },
         setTextures() {
@@ -182,5 +207,17 @@ body {
     background-color: #42b983;
     height: 100%;
     width: 100%;
+}
+
+.text {
+    position: absolute;
+    z-index: 1;
+    font-size: 2rem;
+    color: white;
+    top: 50%;
+    width: 100%;
+    text-align: center;
+
+	text-shadow: -1px 1px 0 #000, 1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
 }
 </style>
