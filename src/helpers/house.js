@@ -20,12 +20,12 @@ const meshLabels = {
 
 function createScene(data) {
     const lights = [
-        // {type: 'PointLight', position: new BABYLON.Vector3(40, 30, -40),
-        //     specular: new BABYLON.Color3(0.25, 0.25, 0.25), diffuse: new BABYLON.Color3.Teal()},
+        {type: 'PointLight', position: new BABYLON.Vector3(40, 30, 45),
+            specular: new BABYLON.Color3(0, 0, 0), diffuse: new BABYLON.Color3(0.75, 0.75, 0.75)},
         // {type: 'PointLight', position: new BABYLON.Vector3(-40, 30, 40),
         //     specular: new BABYLON.Color3(0.25, 0.25, 0.25), diffuse: new BABYLON.Color3.Magenta()},
         {type: 'HemisphericLight', position: new BABYLON.Vector3(0, 1, 0),
-            specular: new BABYLON.Color3.Black(), diffuse: new BABYLON.Color3(1, 1, 1)}
+            specular: new BABYLON.Color3.Black(), diffuse: new BABYLON.Color3(0.1, 0.1, 0.1)}
     ];
 
     lights.forEach((light, index) => {
@@ -148,15 +148,31 @@ function createScene(data) {
         p.checkCollisions = true;
     });
 
-    MeshModel.addMesh('imported', {
-        name: 'gcn',
-        path: 'assets/',
-        file: 'gamecube.glb',
-        scene: data.scene,
-        size: 25,
-        position: new BABYLON.Vector3(25, 0, 125),
-        rotation: new BABYLON.Vector3(Math.PI/2, Math.PI/-1.5, 0),
-        scaling: new BABYLON.Vector3(0.25, 0.25, 0.25)
+    const objs = [
+        {name: 'lamp', path: 'assets/bioshock2/', file: 'light_ceiling.glb',
+            position: new BABYLON.Vector3(40, 40, 45), scaling: new BABYLON.Vector3(0.15, 0.15, 0.15)},
+        {name: 'lamp', path: 'assets/', file: 'Froggy Chair.glb',
+            position: new BABYLON.Vector3(50, 0, 55),
+            rotation: new BABYLON.Vector3(0, Math.PI/-1.5, 0),
+            scaling: new BABYLON.Vector3(100, 100, 100)},
+        {name: 'gcn', path: 'assets/', file: 'gamecube.glb', collision: true, size: 25, position: new BABYLON.Vector3(25, 0, 125),
+            rotation: new BABYLON.Vector3(Math.PI/2, Math.PI/-1.5, 0), scaling: new BABYLON.Vector3(0.25, 0.25, 0.25)}
+    ];
+
+    objs.forEach((obj) => {
+        BABYLON.SceneLoader.ImportMesh(null, obj.path, obj.file, data.scene, (newMeshes) => {
+            const box = BABYLON.MeshBuilder.CreateBox(
+                obj.name, {size: obj.size || 1}, data.scene
+            );
+
+            newMeshes.forEach((nm) => {nm.parent = box;});
+
+            if (obj.position) {box.position = obj.position;}
+            if (obj.rotation) {box.rotation = obj.rotation;}
+            if (obj.scaling) {box.scaling = obj.scaling;}
+            if (obj.collision) {box.checkCollisions = true;}
+            box.visibility = 0;
+        });
     });
 
     createCamera(data.playerHeight, data.scene, data.canvas);
