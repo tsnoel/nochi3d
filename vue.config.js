@@ -40,11 +40,10 @@ module.exports = {
                 assets: path.resolve(__dirname, 'src/assets'),
                 img: path.resolve(__dirname, 'src/assets/img'),
                 components: path.resolve(__dirname, 'src/components'),
-                handlers: path.resolve(__dirname, 'src/handlers'),
+                scenes: path.resolve(__dirname, 'src/scenes'),
                 helpers: path.resolve(__dirname, 'src/helpers'),
                 models: path.resolve(__dirname, 'src/models'),
-                styles: path.resolve(__dirname, 'src/styles'),
-                views: path.resolve(__dirname, 'src/views')
+                styles: path.resolve(__dirname, 'src/styles')
             }
         }
     }

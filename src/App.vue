@@ -1,5 +1,8 @@
 <template>
     <canvas class="game" id="game"></canvas>
+    <div class="cross">
+        <div>+</div>
+    </div>
     <div v-if="interact && !message" class="text">
         <div>Press '{{interact.key.toUpperCase()}}'</div>
         <div>{{interact.actionLabel}} {{interact.label}}</div>
@@ -15,8 +18,8 @@ import * as cannon from 'cannon';
 
 import 'babylonjs-loaders';
 
-// import demo from 'helpers/demo';
-import house from 'helpers/house';
+// import demo from 'scenes/demo';
+import house from 'scenes/house';
 
 import CamerasModel from 'models/cameras';
 import MeshModel from 'models/mesh';
@@ -209,12 +212,23 @@ body {
     width: 100%;
 }
 
+.cross {
+    position: absolute;
+    z-index: 1;
+    font-size: 3rem;
+    color: white;
+    top: 50%;
+    width: 100%;
+    text-align: center;
+    opacity: 0.5;
+}
+
 .text {
     position: absolute;
     z-index: 1;
     font-size: 2rem;
     color: white;
-    top: 50%;
+    top: 65%;
     width: 100%;
     text-align: center;
 
