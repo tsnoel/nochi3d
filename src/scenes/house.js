@@ -26,7 +26,9 @@ function createScene(data) {
         // {type: 'PointLight', position: new BABYLON.Vector3(-40, 30, 40),
         //     specular: new BABYLON.Color3(0.25, 0.25, 0.25), diffuse: new BABYLON.Color3.Magenta()},
         {type: 'HemisphericLight', position: new BABYLON.Vector3(0, 1, 0),
-            specular: new BABYLON.Color3.Black(), diffuse: new BABYLON.Color3(1, 1, 1)}
+            specular: new BABYLON.Color3.Black(), diffuse: new BABYLON.Color3(0.5, 0.5, 0.5)},
+        {type: 'HemisphericLight', position: new BABYLON.Vector3(0, -1, 0),
+            specular: new BABYLON.Color3.Black(), diffuse: new BABYLON.Color3(0.75, 0.75, 0.75)}
     ];
 
     lights.forEach((light, index) => {
@@ -94,7 +96,10 @@ function createScene(data) {
         {name: 'gar0',  height: 20, width: 15, material: 'green', position: new BABYLON.Vector3(-22.5, 30, -30)},
         {name: 'door_gar', height: 20, width: 15, material: 'magenta', position: new BABYLON.Vector3(-22.5, 10, -30)},
         {name: 'gar1',  height: 40, width: 15, material: 'red',   position: new BABYLON.Vector3(-7.5, 20, -30)},
-        {name: 'gar3',  height: 40, width: 80, material: 'blue',  position: new BABYLON.Vector3(0, 20, -70), rotate: true},
+        {name: 'gar2',  height: 40, width: 20, material: TexturesModel.all.floors, position: new BABYLON.Vector3(0, 20, -40),
+            tiled: true, u1: 6, u2: 3, rotate: true},
+        {name: 'gar3',  height: 40, width: 60, material: TexturesModel.all.floors, position: new BABYLON.Vector3(0, 20, -80),
+            tiled: true, u1: 0, u2: 3, rotate: true},
         {name: 'gar6',  height: 40, width: 80, material: 'red',   position: new BABYLON.Vector3(-40, 20, -110)},
         {name: 'gar9',  height: 40, width: 80, material: 'blue',  position: new BABYLON.Vector3(-80, 20, -70), rotate: true},
         {name: 'gar11', height: 40, width: 50, material: 'red',   position: new BABYLON.Vector3(-55, 20, -30)},
@@ -147,13 +152,19 @@ function createScene(data) {
         {name: 'bhb6',  height: 40, width: 40, material: 'red',   position: new BABYLON.Vector3(10, 20, 130)},
 
         // Living Room
-        {name: 'liv0',  height: 40, width: 50, material: 'red',    position: new BABYLON.Vector3(55, 20, -50)},
-        {name: 'liv3',  height: 40, width: 80, material: 'blue',   position: new BABYLON.Vector3(80, 20, -90), rotate: true},
-        {name: 'liv6',  height: 40, width: 60, material: 'red',    position: new BABYLON.Vector3(50, 20, -130)},
-        {name: 'liv7',  height: 40, width: 20, material: 'blue',   position: new BABYLON.Vector3(20, 20, -120), rotate: true},
-        {name: 'liv8',  height: 10, width: 20, material: 'green',  position: new BABYLON.Vector3(10, 35, -110)},
+        {name: 'liv0',  height: 40, width: 50, material: TexturesModel.all.floors, position: new BABYLON.Vector3(55, 20, -50),
+            tiled: true, u1: 6, u2: 0},
+        {name: 'liv3',  height: 40, width: 80, material: TexturesModel.all.floors, position: new BABYLON.Vector3(80, 20, -90),
+            rotate: true, tiled: true, u1: 2, u2: 0},
+        {name: 'liv6',  height: 40, width: 60, material: TexturesModel.all.floors, position: new BABYLON.Vector3(50, 20, -130),
+            tiled: true, u1: 0, u2: 2},
+        {name: 'liv7',  height: 40, width: 20, material: TexturesModel.all.floors, position: new BABYLON.Vector3(20, 20, -120),
+            rotate: true, tiled: true, u1: 0, u2: 2},
+        {name: 'liv8',  height: 10, width: 20, material: TexturesModel.all.floors, position: new BABYLON.Vector3(10, 35, -110),
+            tiled: true, u1: 0, u2: 2},
         {name: 'goal_liv8',  height: 30, width: 20, material: 'yellow', position: new BABYLON.Vector3(10, 15, -110)},
-        {name: 'liv11',  height: 15, width: 30, material: 'green',  position: new BABYLON.Vector3(15, 32.5, -50)},
+        {name: 'liv11',  height: 15, width: 30, material: TexturesModel.all.floors, position: new BABYLON.Vector3(15, 32.5, -50),
+            tiled: true, u1: 6, u2: 0},
 
         // Kitchen
         {name: 'kit0',  height: 15, width: 30, material: 'yellow', position: new BABYLON.Vector3(50, 32.5, 20)},
@@ -169,11 +180,51 @@ function createScene(data) {
         {name: 'fam9',  height: 40, width: 70, material: 'blue',  position: new BABYLON.Vector3(10, 20, 55), rotate: true},
 
         // Floor Roof
-        {name: 'floor', height: 275, width: 175, position: new BABYLON.Vector3(0, 0, 0)},
-        {name: 'roof', height: 275, width: 175, material: 'yellow', position: new BABYLON.Vector3(0, 40, 0)}
+        {name: 'floor', height: 275, width: 175, material: TexturesModel.all.floors, position: new BABYLON.Vector3(0, 0, 0),
+            tiled: true, u1: 2, u2: 2},
+        {name: 'roof', height: 275, width: 175, material: TexturesModel.all.floors, position: new BABYLON.Vector3(0, 40, 0),
+            tiled: true, u1: 7, u2: 5}
     ];
 
     walls.forEach((wall) => {
+        let p;
+
+        if (wall.tiled) {
+            const faceUV = Array(5).fill(new BABYLON.Vector4.Zero());
+            const columns = 8;
+            const rows = 1;
+            faceUV[0] = new BABYLON.Vector4((wall.u1 || 0) / columns, (wall.v1 || 0) / rows,
+                ((wall.u1 || 0) + 1) / columns, ((wall.v1 || 0) + 1) / rows);
+            faceUV[1] = new BABYLON.Vector4((wall.u2 || 0) / columns, (wall.v2 || 0) / rows,
+                ((wall.u2 || 0) + 1) / columns, ((wall.v2 || 0) + 1) / rows);
+
+            const options = {
+                faceUV: faceUV,
+                width: wall.width,
+                height: wall.height,
+                depth: 0.5,
+                tileSize: 20
+            };
+
+            p = BABYLON.MeshBuilder.CreateTiledBox(wall.name, options);
+        } else {
+            p = BABYLON.MeshBuilder.CreateBox(wall.name, {
+                height: wall.height, width: wall.width, depth: 0.5
+            });
+        }
+
+        if (wall.material && (typeof wall.material) === 'string') {
+            p.material = materials[wall.material].material;
+        } else if (wall.material) {
+            p.material = wall.material;
+        }
+
+        p.position = wall.position;
+        p.rotation.y = wall.rotate ? Math.PI/2 : 0;
+        p.rotation.x = wall.name === 'roof' || wall.name === 'floor' ? Math.PI/-2 : 0;
+        p.checkCollisions = true;
+
+        /*
         const p = BABYLON.MeshBuilder.CreateBox(wall.name, {
             height: wall.height, width: wall.width, depth: 0.5
         });
@@ -188,6 +239,7 @@ function createScene(data) {
         p.rotation.y = wall.rotate ? Math.PI/2 : 0;
         p.rotation.x = wall.name === 'roof' || wall.name === 'floor' ? Math.PI/-2 : 0;
         p.checkCollisions = true;
+        */
     });
 
     const objs = [

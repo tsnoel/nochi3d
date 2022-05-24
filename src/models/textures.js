@@ -13,7 +13,10 @@ class Textures {
     }
 
     setAsset(texture, config) {
-        texture.diffuseTexture = new BABYLON.Texture(config.asset, config.scene);
+        const t = new BABYLON.Texture(config.asset, config.scene);
+        setTimeout(() => {t.updateSamplingMode(1)}, 1000);
+
+        texture.diffuseTexture = t;
     }
 
     setupTexture(config) {
