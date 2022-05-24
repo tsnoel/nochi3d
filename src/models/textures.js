@@ -14,7 +14,9 @@ class Textures {
 
     setAsset(texture, config) {
         const t = new BABYLON.Texture(config.asset, config.scene);
-        setTimeout(() => {t.updateSamplingMode(1)}, 1000);
+        if (config.name === 'floors') {
+            setTimeout(() => {t.updateSamplingMode(1)}, 1000);
+        }
 
         texture.diffuseTexture = t;
     }
