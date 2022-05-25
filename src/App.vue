@@ -150,6 +150,11 @@ export default {
             if (this.interact && this.keys[this.interact.key]) {
                 const res = this.interact.action();
 
+                if (this.interact.link) {
+                    window.open(this.interact.link, '_blank');
+                    this.keys[this.interact.key] = false;
+                }
+
                 if (res) {
                     this.message = res;
 
@@ -168,12 +173,14 @@ export default {
                 nori2: 'assets/nori_full.png',
                 fenny: 'assets/fenny.png',
                 indy: 'assets/indy.png',
-                floors: 'assets/floors.png'
+                floors: 'assets/floors.png',
+                walls: 'assets/walls.png'
             };
 
             Object.keys(files).forEach((name) => {
                 TexturesModel.addTexture({
                     name: name,
+                    samplingMode: name === 'walls' || name === 'floors' ? 1 : 0,
                     scene: this.scene,
                     asset: files[name]
                 });
