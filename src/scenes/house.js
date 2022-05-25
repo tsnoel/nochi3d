@@ -85,7 +85,7 @@ function createScene(data) {
     const objs = [
         {name: 'lamp', path: 'assets/bioshock2/', file: 'light_ceiling.glb',
             position: new BABYLON.Vector3(40, 40, 45), scaling: new BABYLON.Vector3(0.15, 0.15, 0.15)},
-        {name: 'froggy_chair', path: 'assets/', file: 'Froggy Chair.glb', size: 0.2,
+        {name: 'froggy_chair', path: 'assets/', file: 'Froggy Chair.glb', size: 0.1,
             position: new BABYLON.Vector3(50, 0, 55),
             rotation: new BABYLON.Vector3(0, Math.PI/-1.5, 0),
             scaling: new BABYLON.Vector3(100, 100, 100)},
@@ -122,13 +122,16 @@ function createImport(obj, scene) {
             obj.name, {size: obj.size || 1}, scene
         );
 
+        box.position.y += (obj.size * obj.scaling.y) / 2;
+
         newMeshes.forEach((nm) => {nm.parent = box;});
 
         if (obj.position) {box.position = obj.position;}
         if (obj.rotation) {box.rotation = obj.rotation;}
         if (obj.scaling) {box.scaling = obj.scaling;}
+
         if (obj.collision) {box.checkCollisions = true;}
-        box.visibility = 0;
+        box.visibility = 0.5;
     });
 }
 
