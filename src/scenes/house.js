@@ -94,7 +94,7 @@ function createScene(data) {
             rotation: new BABYLON.Vector3(Math.PI/2, Math.PI/1.5, 0),
             scaling: new BABYLON.Vector3(0.8, 0.8, 0.8)},
         {name: 'gcn', path: 'assets/', file: 'gamecube.glb', collision: true, size: 25, position: new BABYLON.Vector3(25, 0, 125),
-            rotation: new BABYLON.Vector3(Math.PI/2, Math.PI/-1.5, 0), scaling: new BABYLON.Vector3(0.25, 0.25, 0.25)}
+            rotation: new BABYLON.Vector3(Math.PI/2, Math.PI/-1.5, 0), scaling: new BABYLON.Vector3(-0.25, 0.25, 0.25)}
     ];
 
     objs.forEach((obj) => {
@@ -188,8 +188,8 @@ function handleFacingMesh(mesh, scene) {
                     if (hasGCN) {
                         createImport({name: 'print_gcn', path: 'assets/', file: 'gamecube.glb', size: 25,
                             position: new BABYLON.Vector3(50, 3.5, 55), rotation: new BABYLON.Vector3(Math.PI/2, Math.PI/-1.5, 0),
-                            scaling: new BABYLON.Vector3(0.25, 0.25, 0.25)}, scene);
-                        setTimeout(() => {window.print(); scene.getMeshByName('print_gcn').position.y = -500}, 250);
+                            scaling: new BABYLON.Vector3(-0.25, 0.25, 0.25)}, scene);
+                        setTimeout(() => {window.print(); (scene.getMeshByName('print_gcn')).dispose();}, 250);
                         return false;
                     }
                     return 'I can\'t sit now... I need to find the Gamecube!';

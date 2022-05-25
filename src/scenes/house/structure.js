@@ -221,7 +221,7 @@ function createStructure(scene) {
 
     const tileMaps = {
         'floors': {columns: 8, rows: 1, tileHeight: 60, tileWidth: 60, material: TexturesModel.all.floors},
-        'walls': {columns: 16, rows: 7, tileHeight: 40, tileWidth: 30, material: TexturesModel.all.walls}
+        'walls': {columns: 16, rows: 7, tileHeight: 40, tileWidth: 20, material: TexturesModel.all.walls}
     };
 
     [...walls, ...floors].forEach((wall) => {

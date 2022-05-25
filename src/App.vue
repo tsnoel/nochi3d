@@ -57,9 +57,11 @@ export default {
         // Load the 3D engine
         this.engine = new BABYLON.Engine(
             this.canvas,
-            true,
-            {preserveDrawingBuffer: true, stencil: true}
+            false,
+            {preserveDrawingBuffer: false, stencil: true}
         );
+
+        this.engine.setHardwareScalingLevel(2);
 
         // Create a basic BJS Scene object
         this.scene = new BABYLON.Scene(this.engine);
