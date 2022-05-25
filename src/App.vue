@@ -145,13 +145,12 @@ export default {
                 this.jLock = false;
             }
 
-            this.interact = house.handleFacingMesh(CamerasModel.getFacingMesh('camera', this.scene));
+            this.interact = house.handleFacingMesh(CamerasModel.getFacingMesh('camera', this.scene), this.scene);
 
             if (this.interact && this.keys[this.interact.key]) {
                 const res = this.interact.action();
 
-                if (this.interact.link) {
-                    window.open(this.interact.link, '_blank');
+                if (this.interact.resetKey) {
                     this.keys[this.interact.key] = false;
                 }
 
@@ -203,6 +202,10 @@ html {
 
 body {
     margin: 0;
+}
+
+@page {
+    size: landscape;
 }
 
 #app {

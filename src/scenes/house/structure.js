@@ -91,17 +91,17 @@ const walls = [
 
     // Bedroom B
     {name: 'brb0', height: 40, width: 50, position: new BABYLON.Vector3(-55, 20, 70),
-        material: 'red'}, // ====================================
+        coordinates: {map: 'walls', a: wallMap.bedroom3, b: wallMap.bedroom2}},
     {name: 'brb1', height: 40, width: 30, position: new BABYLON.Vector3(-30, 20, 55), rotate: true,
-        material: 'blue'}, // ====================================
+        coordinates: {map: 'walls', a: wallMap.hall, b: wallMap.bedroom2}},
     {name: 'brb4', height: 20, width: 15, position: new BABYLON.Vector3(-30, 30, 32.5), rotate: true,
-        material: 'green'}, // ====================================
+        coordinates: {map: 'walls', a: wallMap.hall, b: wallMap.bedroom2}},
     {name: 'door_brb4', height: 20, width: 15, position: new BABYLON.Vector3(-30, 10, 32.5), rotate: true,
         material: 'magenta'}, // ====================================
     {name: 'brb5', height: 40, width: 5, position: new BABYLON.Vector3(-30, 20, 22.5), rotate: true,
-        material: 'blue'}, // ====================================
+        coordinates: {map: 'walls', a: wallMap.hall, b: wallMap.bedroom2}},
     {name: 'brb9', height: 40, width: 50, position: new BABYLON.Vector3(-80, 20, 45), rotate: true,
-        material: 'blue'}, // ====================================
+        coordinates: {map: 'walls', a: wallMap.bedroom2, b: wallMap.outside}},
 
     // Bathroom A
     {name: 'bha0', height: 40, width: 20, position: new BABYLON.Vector3(0, 20, 60),
@@ -220,8 +220,8 @@ function createStructure(scene) {
     });
 
     const tileMaps = {
-        'floors': {columns: 8, rows: 1, tileHeight: 40, tileWidth: 40, material: TexturesModel.all.floors},
-        'walls': {columns: 16, rows: 7, tileHeight: 40, tileWidth: 20, material: TexturesModel.all.walls}
+        'floors': {columns: 8, rows: 1, tileHeight: 60, tileWidth: 60, material: TexturesModel.all.floors},
+        'walls': {columns: 16, rows: 7, tileHeight: 40, tileWidth: 30, material: TexturesModel.all.walls}
     };
 
     [...walls, ...floors].forEach((wall) => {

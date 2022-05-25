@@ -89,24 +89,16 @@ function createScene(data) {
             position: new BABYLON.Vector3(50, 0, 55),
             rotation: new BABYLON.Vector3(0, Math.PI/-1.5, 0),
             scaling: new BABYLON.Vector3(100, 100, 100)},
+        {name: 'sit_werewolf', path: 'assets/', file: 'sit_werewolf2.glb', size: 0.2,
+            position: new BABYLON.Vector3(-40, 0, 35),
+            rotation: new BABYLON.Vector3(Math.PI/2, Math.PI/1.5, 0),
+            scaling: new BABYLON.Vector3(0.8, 0.8, 0.8)},
         {name: 'gcn', path: 'assets/', file: 'gamecube.glb', collision: true, size: 25, position: new BABYLON.Vector3(25, 0, 125),
             rotation: new BABYLON.Vector3(Math.PI/2, Math.PI/-1.5, 0), scaling: new BABYLON.Vector3(0.25, 0.25, 0.25)}
     ];
 
     objs.forEach((obj) => {
-        BABYLON.SceneLoader.ImportMesh(null, obj.path, obj.file, data.scene, (newMeshes) => {
-            const box = BABYLON.MeshBuilder.CreateBox(
-                obj.name, {size: obj.size || 1}, data.scene
-            );
-
-            newMeshes.forEach((nm) => {nm.parent = box;});
-
-            if (obj.position) {box.position = obj.position;}
-            if (obj.rotation) {box.rotation = obj.rotation;}
-            if (obj.scaling) {box.scaling = obj.scaling;}
-            if (obj.collision) {box.checkCollisions = true;}
-            box.visibility = 0;
-        });
+        createImport(obj, data.scene);
     });
 
     createCamera(data.playerHeight, data.scene, data.canvas);
@@ -124,11 +116,27 @@ function createCamera(playerHeight, scene, canvas) {
     CamerasModel.addPointerLock(scene, canvas);
 }
 
+function createImport(obj, scene) {
+    BABYLON.SceneLoader.ImportMesh(null, obj.path, obj.file, scene, (newMeshes) => {
+        const box = BABYLON.MeshBuilder.CreateBox(
+            obj.name, {size: obj.size || 1}, scene
+        );
+
+        newMeshes.forEach((nm) => {nm.parent = box;});
+
+        if (obj.position) {box.position = obj.position;}
+        if (obj.rotation) {box.rotation = obj.rotation;}
+        if (obj.scaling) {box.scaling = obj.scaling;}
+        if (obj.collision) {box.checkCollisions = true;}
+        box.visibility = 0;
+    });
+}
+
 function getStartingPosition(playerHeight) {
     return new BABYLON.Vector3(10, playerHeight * 2.55, -100);
 }
 
-function handleFacingMesh(mesh) {
+function handleFacingMesh(mesh, scene) {
     if (mesh) {
         const label = meshLabels[mesh.name] || mesh.name;
 
@@ -162,9 +170,10 @@ function handleFacingMesh(mesh) {
                 label,
                 actionLabel: 'Collect',
                 key: 'e',
-                link: 'https://en.wikipedia.org/wiki/GameCube',
+                resetKey: true,
                 action: () => {
                     mesh.dispose();
+                    window.open('https://en.wikipedia.org/wiki/GameCube', '_blank');
                     hasGCN = true;
                 }
             };
@@ -172,9 +181,17 @@ function handleFacingMesh(mesh) {
             return {
                 mesh,
                 label,
-                actionLabel: 'Sit on',
+                actionLabel: hasGCN ? 'Print' : 'Sit on',
                 key: 'e',
+                resetKey: true,
                 action: () => {
+                    if (hasGCN) {
+                        createImport({name: 'print_gcn', path: 'assets/', file: 'gamecube.glb', size: 25,
+                            position: new BABYLON.Vector3(50, 3.5, 55), rotation: new BABYLON.Vector3(Math.PI/2, Math.PI/-1.5, 0),
+                            scaling: new BABYLON.Vector3(0.25, 0.25, 0.25)}, scene);
+                        setTimeout(() => {window.print(); scene.getMeshByName('print_gcn').position.y = -500}, 250);
+                        return false;
+                    }
                     return 'I can\'t sit now... I need to find the Gamecube!';
                 }
             };
